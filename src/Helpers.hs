@@ -1,5 +1,6 @@
 module Helpers
-  ( mostCommon
+  ( mapmap
+  , mostCommon
   , readInts
   , readCommaSeparatedInts
   , toDec
@@ -34,3 +35,7 @@ toDec = foldl' (\acc x -> acc * 2 + digitToInt x) 0
 
 mostCommon :: Ord a => [a] -> a
 mostCommon = head . maximumBy (comparing length) . group . sort
+
+-- |Convenience to map over a functor of funcotrs, e. g., a list of lists
+mapmap :: (Functor f, Functor g) => (a -> b) -> f (g a) -> f (g b)
+mapmap = fmap . fmap
