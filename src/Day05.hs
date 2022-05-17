@@ -21,7 +21,7 @@ part1 :: IO Int
 part1 = length . M.filter (> 1) . toGrid . filter isStraight <$> input
 
 part2 :: IO Int
-part2 = return 2
+part2 = length . M.filter (> 1) . toGrid <$> input
 
 isStraight :: Line -> Bool
 isStraight ((x1, y1), (x2, y2)) = x1 == x2 || y1 == y2
@@ -31,10 +31,12 @@ toGrid = M.fromListWith (+) . concatMap expandAndInit
   where
     expandAndInit :: Line -> [(Coords, Int)]
     expandAndInit ((x1, y1), (x2, y2))
-      | x1 < x2 = [((x, y1), 1) | x <- [x1 .. x2]]
-      | x1 > x2 = [((x, y1), 1) | x <- [x2 .. x1]]
-      | y1 < y2 = [((x1, y), 1) | y <- [y1 .. y2]]
-      | y1 > y2 = [((x1, y), 1) | y <- [y2 .. y1]]
+      | x1 == x2 = [((x1, y), 1) | y <- range y1 y2]
+      | y1 == y2 = [((x, y1), 1) | x <- range x1 x2]
+      | otherwise = [((x, y), 1) | (x, y) <- zip (range x1 x2) (range y1 y2)]
+
+    range :: Int -> Int -> [Int]
+    range x y = if x <= y then [x .. y] else [x, x -1 .. y]
 
 input :: IO [Line]
 input =
